@@ -12,11 +12,11 @@ namespace CSV_Stacker
 {
     public partial class Form1 : Form
     {
-        public class nameAge
-        {
-            string[] name;
-            int age;
-        }
+        //public class nameAge
+        //{
+        //    string[] name;
+        //    int age;
+        //}
 
         public Form1()
         {

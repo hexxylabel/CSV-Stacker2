@@ -51,9 +51,15 @@ namespace CSV_Stacker
                     var fileName = Path.GetFileName(file);
                     var fileNameWE = Path.GetFileNameWithoutExtension(file);
                     var fileNameWN = Regex.Replace(fileNameWE, @"[\d]", string.Empty);
-                    var fileNameWFN = fileNameWE.Substring(2, fileNameWE.Length - 2);
-
-                    char fileNameLast = fileNameWN[fileNameWN.Length - 1];
+                    var fileNameWFP = fileNameWN;
+                    var poweradeTrue = false;
+                    if ( fileNameWFP[0] == 'P' )
+                    {
+                        fileNameWFP = fileNameWFP.Substring(1, fileNameWFP.Length - 1);
+                        poweradeTrue = true;
+                    }
+                    char fileNameLast = fileNameWFP[fileNameWFP.Length - 1];
+                    char fileNameLeg = fileNameWFP[fileNameWFP.Length - 2];
 
                     //double age = Char.GetNumericValue(fileNameWE[0]) * 10 + Char.GetNumericValue(fileName[1]);
 
@@ -71,42 +77,69 @@ namespace CSV_Stacker
                     foreach (string lines in raw_line)
                     {
                         progressBar2.Increment(1);
-
+                        /////////////////////////////////////////////////
                         if (d == 16)
                         {
-                            oSheet.Cells[row, column] = fileNameWFN;
+                            oSheet.Cells[row, column] = fileNameWE;
                             column++;
                         }
-                        if (d == 17 && fileNameLast != 'j')
+                        /////////////////////////////////////////////////
+                        if (d == 17 && fileNameLast != 'j' && fileNameLeg != 'l' && fileNameLast != 'l')
                         {
-                            oSheet.Cells[row, column] = fileNameWN;
+                            oSheet.Cells[row, column] = fileNameWFP;
                             column++;
                         }
-                        else if (d == 17 && fileNameLast == 'j')
+                        else if (d == 17 && fileNameLast == 'j' && fileNameLeg != 'l')
                         {
-                            oSheet.Cells[row, column] = fileNameWN.Remove(fileNameWN.Length - 1);
+                            oSheet.Cells[row, column] = fileNameWFP.Remove(fileNameWFP.Length - 1);
                             column++;
                         }
-                        if (d == 18 && count == 3)
+                        else if (d == 17 && fileNameLast != 'j' && fileNameLast == 'l') {
+                            oSheet.Cells[row, column] = fileNameWFP.Remove(fileNameWFP.Length - 1);
+                            column++;
+                        }
+                        else if (d == 17 && fileNameLast == 'j' && fileNameLeg == 'l')
                         {
-                            oSheet.Cells[row, column] = "Szomjas";
+                            oSheet.Cells[row, column] = fileNameWFP.Remove(fileNameWFP.Length - 2);
                             column++;
                         }
-                        else if (d == 18 && count == 4)
+                        /////////////////////////////////////////////////
+
+
+                        /////////////////////////////////////////////////
+                        if (d == 18 && count == 1 && !poweradeTrue)
                         {
-                            oSheet.Cells[row, column] = "1";
+                            oSheet.Cells[row, column] = "Normál";
                             column++;
                         }
-                        else if (d == 18 && count == 5)
+                        else if (d == 18 && count == 2 && !poweradeTrue)
                         {
-                            oSheet.Cells[row, column] = "2";
+                            oSheet.Cells[row, column] = "5 perc";
                             column++;
                         }
-                        else if (d == 18 && count == 6)
+                        else if (d == 18 && count == 3 && !poweradeTrue)
                         {
-                            oSheet.Cells[row, column] = "3";
+                            oSheet.Cells[row, column] = "10 perc";
                             column++;
                         }
+                        else if (d == 18 && count == 4 && !poweradeTrue)
+                        {
+                            oSheet.Cells[row, column] = "15 perc";
+                            column++;
+                        }
+                        else if (d == 18 && count == 1 && poweradeTrue)
+                        {
+                            oSheet.Cells[row, column] = "1. ivás";
+                            column++;
+                        }
+                        else if (d == 18 && count == 2 && poweradeTrue)
+                        {
+                            oSheet.Cells[row, column] = "2. ivás";
+                            column++;
+                        }
+                        /////////////////////////////////////////////////
+
+                        /////////////////////////////////////////////////
                         if (d == 19 && fileNameLast != 'j')
                         {
                             oSheet.Cells[row, column] = "bal";
@@ -117,21 +150,50 @@ namespace CSV_Stacker
                             oSheet.Cells[row, column] = "jobb";
                             column++;
                         }
+                        /////////////////////////////////////////////////
+
+                        /////////////////////////////////////////////////               
+                        if (d == 20 && !poweradeTrue && fileNameLeg != 'l' && fileNameLast != 'l')
+                        {
+                            oSheet.Cells[row, column] = "kar";
+                            column++;
+                        }
+                        else if (d == 20 && !poweradeTrue && (fileNameLeg == 'l' || fileNameLast == 'l'))
+                        {
+                            oSheet.Cells[row, column] = "láb";
+                            column++;
+                        }
+                        else if (d == 20 && poweradeTrue)
+                        {
+                            oSheet.Cells[row, column] = "Powerade";
+                            column++;
+                        }
+                        /////////////////////////////////////////////////
+
+                        /////////////////////////////////////////////////            
                         //if (d == 20)
                         //{
                         //    oSheet.Cells[row, column] = age;
                         //    column++;
-                        //}
+                        //}                        
+                        /////////////////////////////////////////////////
+
+                        /////////////////////////////////////////////////
                         if (d >= 22 && d <= 114)
                         {
                             var values = lines.Split(',');
                             oSheet.Cells[row, column] = values[1];
                             column++;
                         }
+                        /////////////////////////////////////////////////
+
+                        /////////////////////////////////////////////////
                         if (d == 115)
                         {
                             break;
                         }
+                        /////////////////////////////////////////////////
+
                         d++;
                     }
                     row++;

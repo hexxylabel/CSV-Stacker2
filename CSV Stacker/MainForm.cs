@@ -12,7 +12,7 @@ namespace CSV_Stacker
 {
     public partial class MainForm : Form
     {
-        string asd;
+
         public MainForm()
         {
             InitializeComponent();
